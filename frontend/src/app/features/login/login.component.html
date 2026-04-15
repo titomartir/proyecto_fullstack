@@ -1,0 +1,19 @@
+<h2>Iniciar Sesión</h2>
+<form [formGroup]="form" (ngSubmit)="login()">
+  <label>Email:</label>
+  <input type="email" formControlName="email" />
+  <div *ngIf="form.get('email')?.touched && form.get('email')?.invalid">
+    <span *ngIf="form.get('email')?.errors?.['required']">El email es obligatorio.</span>
+    <span *ngIf="form.get('email')?.errors?.['email']">Formato de email inválido.</span>
+  </div>
+
+  <label>Contraseña:</label>
+  <input type="password" formControlName="password" />
+  <div *ngIf="form.get('password')?.touched && form.get('password')?.invalid">
+    <span *ngIf="form.get('password')?.errors?.['required']">La contraseña es obligatoria.</span>
+  </div>
+
+  <button type="submit">Entrar</button>
+  <div *ngIf="error" style="color:red">{{ error }}</div>
+</form>
+<p>¿No tienes cuenta? <a routerLink="/register">Regístrate</a></p>

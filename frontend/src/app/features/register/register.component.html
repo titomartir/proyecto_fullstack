@@ -1,0 +1,53 @@
+<h2>Registro</h2>
+<form [formGroup]="form" (ngSubmit)="register()">
+  <label>Nombre:</label>
+  <input formControlName="nombre" />
+  <div *ngIf="form.get('nombre')?.touched && form.get('nombre')?.invalid">
+    <span *ngIf="form.get('nombre')?.errors?.['required']">El nombre es obligatorio.</span>
+  </div>
+
+  <label>Apellido:</label>
+  <input formControlName="apellido" />
+  <div *ngIf="form.get('apellido')?.touched && form.get('apellido')?.invalid">
+    <span *ngIf="form.get('apellido')?.errors?.['required']">El apellido es obligatorio.</span>
+  </div>
+
+  <label>Edad:</label>
+  <input type="number" formControlName="edad" />
+  <div *ngIf="form.get('edad')?.touched && form.get('edad')?.invalid">
+    <span *ngIf="form.get('edad')?.errors?.['required']">La edad es obligatoria.</span>
+    <span *ngIf="form.get('edad')?.errors?.['min'] || form.get('edad')?.errors?.['max']">Edad entre 18 y 120.</span>
+  </div>
+
+  <label>Teléfono:</label>
+  <input formControlName="telefono" />
+  <div *ngIf="form.get('telefono')?.touched && form.get('telefono')?.invalid">
+    <span *ngIf="form.get('telefono')?.errors?.['required']">El teléfono es obligatorio.</span>
+    <span *ngIf="form.get('telefono')?.errors?.['pattern']">Teléfono de 8 dígitos.</span>
+  </div>
+
+  <label>Email (login):</label>
+  <input type="email" formControlName="email" />
+  <div *ngIf="form.get('email')?.touched && form.get('email')?.invalid">
+    <span *ngIf="form.get('email')?.errors?.['required']">El email es obligatorio.</span>
+    <span *ngIf="form.get('email')?.errors?.['email']">Formato de email inválido.</span>
+  </div>
+
+  <label>Correo (perfil):</label>
+  <input type="email" formControlName="correo" />
+  <div *ngIf="form.get('correo')?.touched && form.get('correo')?.invalid">
+    <span *ngIf="form.get('correo')?.errors?.['required']">El correo es obligatorio.</span>
+    <span *ngIf="form.get('correo')?.errors?.['email']">Formato de correo inválido.</span>
+  </div>
+
+  <label>Contraseña:</label>
+  <input type="password" formControlName="password" />
+  <div *ngIf="form.get('password')?.touched && form.get('password')?.invalid">
+    <span *ngIf="form.get('password')?.errors?.['required']">La contraseña es obligatoria.</span>
+    <span *ngIf="form.get('password')?.errors?.['minlength']">Mínimo 6 caracteres.</span>
+  </div>
+
+  <button type="submit">Registrar</button>
+  <div *ngIf="error" style="color:red">{{ error }}</div>
+</form>
+<p>¿Ya tienes cuenta? <a routerLink="/login">Inicia sesión</a></p>

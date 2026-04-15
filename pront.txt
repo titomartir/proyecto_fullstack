@@ -1,0 +1,549 @@
+Parte 2: Aplicación de Conocimientos (50 puntos)
+Pront Profesional para Generación de Código por IA
+📌 Información del Proyecto
+Campo	Valor
+Nombre del proyecto	FullStack Auth & Profile System
+Tecnologías	Angular (frontend) + Node.js/Express (backend) + PostgreSQL (base de datos)
+Arquitectura backend	Por capas: Routes → Controllers → Services → Repositories
+Arquitectura frontend	Angular standalone components + servicios core
+Autenticación	JWT (JSON Web Token)
+🗄️ Base de Datos PostgreSQL
+Instrucción
+Genera un script SQL completo que cree la base de datos desde cero con las siguientes tablas.
+
+Esquema requerido
+sql
+-- Crear base de datos
+CREATE DATABASE evaluacion_fullstack;
+
+\c evaluacion_fullstack;
+
+-- Tabla: usuarios (para autenticación)
+CREATE TABLE usuarios (
+    id SERIAL PRIMARY KEY,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Tabla: perfiles (relación 1:1 con usuario)
+CREATE TABLE perfiles (
+    id SERIAL PRIMARY KEY,
+    usuario_id INTEGER UNIQUE NOT NULL,
+    nombre VARCHAR(100) NOT NULL,
+    apellido VARCHAR(100) NOT NULL,
+    edad INTEGER NOT NULL,
+    correo VARCHAR(255) NOT NULL,
+    telefono VARCHAR(20) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE
+);
+
+-- Índices para rendimiento
+CREATE INDEX idx_usuarios_email ON usuarios(email);
+CREATE INDEX idx_perfiles_usuario_id ON perfiles(usuario_id);
+Configuración de conexión (.env)
+env
+PORT=3000
+DB_HOST=localhost
+DB_PORT=5432
+DB_USER=postgres
+DB_PASSWORD=tu_password
+DB_NAME=evaluacion_fullstack
+JWT_SECRET=clave_super_secreta_para_firmar_tokens
+JWT_EXPIRES_IN=8h
+BCRYPT_ROUNDS=10
+🔧 Backend (Node.js + Express)
+Estructura de carpetas requerida
+text
+backend/
+├── src/
+│   ├── config/
+│   │   └── database.js          # Conexión a PostgreSQL
+│   ├── controllers/
+│   │   ├── authController.js    # Login y Register
+│   │   └── perfilController.js  # CRUD perfil
+│   ├── middleware/
+│   │   ├── authMiddleware.js    # Verificar JWT
+│   │   └── errorMiddleware.js   # Manejo global de errores
+│   ├── repositories/
+│   │   ├── usuarioRepository.js # Acceso a tabla usuarios
+│   │   └── perfilRepository.js  # Acceso a tabla perfiles
+│   ├── services/
+│   │   ├── authService.js       # Lógica de autenticación
+│   │   └── perfilService.js     # Lógica de perfil
+│   ├── routes/
+│   │   ├── authRoutes.js
+│   │   └── perfilRoutes.js
+│   ├── utils/
+│   │   ├── jwtHelper.js         # Generar/verificar JWT
+│   │   └── validators.js        # Esquemas de validación
+│   └── app.js                   # Configuración Express
+├── .env
+├── package.json
+└── server.js
+Dependencias requeridas (package.json)
+json
+{
+  "name": "backend-perfil-app",
+  "version": "1.0.0",
+  "dependencies": {
+    "express": "^4.18.2",
+    "pg": "^8.11.0",
+    "bcrypt": "^5.1.0",
+    "jsonwebtoken": "^9.0.0",
+    "dotenv": "^16.0.3",
+    "express-validator": "^7.0.1",
+    "cors": "^2.8.5"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  }
+}
+Requerimientos funcionales del backend
+1. Configuración (app.js)
+Usar express.json() para parsear JSON
+
+Usar cors() para permitir peticiones desde frontend
+
+Registrar rutas: /api/auth y /api/perfil
+
+Middleware para rutas no encontradas (404)
+
+Middleware global de manejo de errores (500)
+
+2. Repositorios (acceso a datos)
+usuarioRepository.js
+
+findByEmail(email) → retorna usuario por email
+
+create(email, passwordHash) → crea nuevo usuario
+
+perfilRepository.js
+
+findByUsuarioId(usuarioId) → retorna perfil por usuario_id
+
+create(usuarioId, perfilData) → crea perfil
+
+update(usuarioId, perfilData) → actualiza perfil
+
+Todas las consultas deben usar parámetros preparados ($1, $2)
+
+3. Servicios (lógica de negocio)
+authService.js
+
+register(email, password, perfilData)
+
+Verificar si email ya existe
+
+Hashear contraseña con bcrypt (10 rounds)
+
+Crear usuario
+
+Crear perfil automáticamente (relación 1:1)
+
+Generar JWT token
+
+Retornar { token, usuario, perfil }
+
+login(email, password)
+
+Buscar usuario por email
+
+Comparar contraseña con bcrypt
+
+Generar JWT token
+
+Retornar { token, usuario, perfil }
+
+perfilService.js
+
+obtenerPerfil(usuarioId) → retorna perfil o error 404
+
+actualizarPerfil(usuarioId, perfilData)
+
+Validar edad (18-120)
+
+Validar teléfono (8 dígitos)
+
+Actualizar perfil existente
+
+4. Controladores
+authController.js
+
+POST /api/auth/register
+
+Validar campos con express-validator
+
+Respuesta exitosa: 201 + { success, token, usuario, perfil }
+
+Error email duplicado: 409
+
+Error validación: 400
+
+POST /api/auth/login
+
+Validar email y password
+
+Respuesta exitosa: 200 + { success, token, usuario, perfil }
+
+Credenciales incorrectas: 401
+
+perfilController.js (todas requieren autenticación)
+
+GET /api/perfil → obtener perfil
+
+PUT /api/perfil → actualizar perfil
+
+5. Middlewares
+authMiddleware.js
+
+Verificar header Authorization: Bearer <token>
+
+Validar token con JWT_SECRET
+
+Adjuntar req.usuario con datos decodificados
+
+Retornar 401 si token inválido o no existe
+
+6. Validaciones (express-validator)
+Registro (POST /api/auth/register)
+
+email: isEmail()
+
+password: minLength(6)
+
+nombre: notEmpty()
+
+apellido: notEmpty()
+
+edad: isInt({ min: 18, max: 120 })
+
+correo: isEmail()
+
+telefono: matches(/^\d{8}$/)
+
+Login (POST /api/auth/login)
+
+email: isEmail()
+
+password: notEmpty()
+
+Actualizar perfil (PUT /api/perfil)
+
+nombre: notEmpty()
+
+apellido: notEmpty()
+
+edad: isInt({ min: 18, max: 120 })
+
+correo: isEmail()
+
+telefono: matches(/^\d{8}$/)
+
+7. Utilitarios
+jwtHelper.js
+
+generateToken(payload) → retorna JWT firmado
+
+verifyToken(token) → retorna payload o lanza error
+
+🅰️ Frontend (Angular)
+Estructura de carpetas requerida
+text
+frontend/
+├── src/
+│   ├── app/
+│   │   ├── core/
+│   │   │   ├── guards/
+│   │   │   │   └── auth.guard.ts
+│   │   │   ├── interceptors/
+│   │   │   │   └── auth.interceptor.ts
+│   │   │   └── services/
+│   │   │       ├── auth.service.ts
+│   │   │       └── perfil.service.ts
+│   │   ├── features/
+│   │   │   ├── login/
+│   │   │   │   └── login.component.ts
+│   │   │   ├── register/
+│   │   │   │   └── register.component.ts
+│   │   │   └── perfil/
+│   │   │       └── perfil.component.ts
+│   │   ├── models/
+│   │   │   ├── usuario.model.ts
+│   │   │   └── perfil.model.ts
+│   │   ├── app.routes.ts
+│   │   └── app.config.ts
+│   └── environments/
+│       ├── environment.ts
+│       └── environment.prod.ts
+Requerimientos funcionales del frontend
+1. Modelos (TypeScript interfaces)
+usuario.model.ts
+
+typescript
+export interface Usuario {
+    id: number;
+    email: string;
+}
+
+export interface LoginResponse {
+    success: boolean;
+    token: string;
+    usuario: Usuario;
+    perfil?: Perfil;
+}
+perfil.model.ts
+
+typescript
+export interface Perfil {
+    id?: number;
+    usuario_id?: number;
+    nombre: string;
+    apellido: string;
+    edad: number;
+    correo: string;
+    telefono: string;
+    created_at?: Date;
+    updated_at?: Date;
+}
+2. Servicios core
+auth.service.ts
+
+login(email, password) → POST /api/auth/login
+
+register(userData) → POST /api/auth/register
+
+logout() → eliminar token y redirigir
+
+getToken() → obtener token de localStorage
+
+isAuthenticated() → verificar token y expiración
+
+authStatus$ → BehaviorSubject para estado de autenticación
+
+Almacenar token y usuario en localStorage tras login/register
+
+perfil.service.ts
+
+obtenerPerfil() → GET /api/perfil
+
+actualizarPerfil(perfil) → PUT /api/perfil
+
+Manejar errores 401, 400, 404, 500
+
+3. Interceptor HTTP
+auth.interceptor.ts
+
+Interceptar todas las peticiones HTTP
+
+Agregar header Authorization: Bearer <token> si existe token
+
+Capturar errores 401 → llamar a logout() y redirigir a /login
+
+4. Guards
+auth.guard.ts
+
+Implementar canActivate()
+
+Redirigir a /login si no autenticado
+
+Permitir acceso si autenticado
+
+5. Componentes (standalone)
+LoginComponent
+
+Formulario reactivo con campos: email, password
+
+Validaciones: required, email (email)
+
+Mostrar error "Credenciales incorrectas" si falla
+
+Redirigir a /perfil si éxito
+
+Botón "¿No tienes cuenta? Regístrate" → enlace a /register
+
+RegisterComponent
+
+Formulario reactivo con campos:
+
+nombre (required)
+
+apellido (required)
+
+edad (required, min 18, max 120)
+
+telefono (required, pattern 8 dígitos)
+
+email (required, email) - para login
+
+correo (required, email) - para perfil
+
+password (required, minLength 6)
+
+Mostrar errores de validación específicos
+
+Al enviar, llamar a authService.register()
+
+Redirigir a /perfil si éxito
+
+Mostrar error si email ya existe
+
+Enlace a /login para usuarios existentes
+
+PerfilComponent
+
+Cargar perfil automáticamente al iniciar (GET /api/perfil)
+
+Formulario reactivo precargado con datos del perfil
+
+Campos: nombre, apellido, edad, correo, telefono
+
+Validaciones idénticas a registro
+
+Botón "Actualizar Perfil" (PUT /api/perfil)
+
+Mostrar mensaje de éxito o error
+
+Botón "Cerrar Sesión" → logout()
+
+Nota: No hay opción de crear perfil porque se crea automáticamente en registro
+
+6. Rutas (app.routes.ts)
+typescript
+[
+    { path: 'login', component: LoginComponent },
+    { path: 'register', component: RegisterComponent },
+    { path: 'perfil', component: PerfilComponent, canActivate: [AuthGuard] },
+    { path: '', redirectTo: '/perfil', pathMatch: 'full' },
+    { path: '**', redirectTo: '/perfil' }
+]
+7. Configuración (app.config.ts)
+typescript
+export const appConfig: ApplicationConfig = {
+    providers: [
+        provideRouter(routes),
+        provideHttpClient(withInterceptorsFromDi()),
+        { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
+    ]
+};
+8. Variables de entorno
+environment.ts
+
+typescript
+export const environment = {
+    production: false,
+    apiUrl: 'http://localhost:3000/api'
+};
+✅ Criterios de Aceptación (Checklist de verificación)
+Base de Datos (10 pts)
+Script SQL crea BD y tablas correctamente
+
+Relación 1:1 entre usuarios y perfiles
+
+Índices creados para email y usuario_id
+
+Conexión configurada con variables de entorno
+
+Backend (10 pts)
+API REST con endpoints /auth/login, /auth/register, /perfil (GET/PUT)
+
+Consultas parametrizadas (sin SQL injection)
+
+Contraseñas hasheadas con bcrypt
+
+JWT generado y verificado correctamente
+
+Middleware de autenticación protege rutas de perfil
+
+Validaciones con express-validator en todos los endpoints
+
+Separación clara de capas (routes/controllers/services/repositories)
+
+Login (10 pts)
+Formulario Angular con validaciones básicas
+
+Comunicación correcta con backend
+
+Validación de credenciales contra PostgreSQL
+
+Mensaje "Credenciales incorrectas" si falla
+
+Almacenamiento de token en localStorage
+
+Redirección a /perfil tras éxito
+
+Módulo Perfil (20 pts)
+Perfil se crea automáticamente al registrarse
+
+GET /api/perfil carga datos existentes
+
+PUT /api/perfil actualiza datos
+
+Formulario con todos los campos requeridos
+
+Validaciones frontend: requeridos, email válido, edad numérica (18-120), teléfono 8 dígitos
+
+Validaciones backend (mismas reglas)
+
+Mensajes de éxito/error visibles al usuario
+
+Integración Frontend-Backend (10 pts)
+Consumo de API con HttpClient
+
+Interceptor agrega token automáticamente
+
+Manejo de errores:
+
+401 → logout + redirección a login
+
+400 → mostrar errores de validación
+
+404 → mensaje amigable
+
+409 → "Email ya registrado"
+
+500 → "Error del servidor"
+
+Manejo de estado de sesión (autenticado/no autenticado)
+
+📝 Notas importantes para la IA generadora
+El perfil NO se crea manualmente después del login. Se crea automáticamente durante el registro en una misma transacción (usuario + perfil).
+
+La tabla perfiles tiene dos campos de correo:
+
+correo en perfiles (para mostrar en el perfil)
+
+email en usuarios (para login)
+
+Ambos son independientes y se validan por separado.
+
+El componente Perfil solo debe actualizar, nunca mostrar un formulario vacío para crear.
+
+El registro debe incluir TODOS los campos del perfil en la misma petición.
+
+Usar Angular standalone components (no módulos tradicionales).
+
+Todas las consultas SQL deben ser parametrizadas para evitar SQL injection.
+
+Las contraseñas nunca se almacenan ni se envían en texto plano.
+
+El JWT debe incluir al menos: { id, email }.
+
+🚀 Comandos de ejecución (para referencia)
+bash
+# Base de datos
+psql -U postgres -f database/schema.sql
+
+# Backend
+cd backend
+npm install
+npm run dev
+
+# Frontend
+cd frontend
+npm install
+ng serve
