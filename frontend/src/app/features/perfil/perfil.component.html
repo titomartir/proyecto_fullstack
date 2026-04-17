@@ -1,38 +1,59 @@
-<h2>Mi Perfil</h2>
-<form [formGroup]="form" (ngSubmit)="actualizarPerfil()">
-  <label>Nombre:</label>
-  <input formControlName="nombre" />
-  <div *ngIf="form.get('nombre')?.touched && form.get('nombre')?.invalid">
-    <span *ngIf="form.get('nombre')?.errors?.['required']">El nombre es obligatorio.</span>
-  </div>
-
-  <label>Apellido:</label>
-  <input formControlName="apellido" />
-  <div *ngIf="form.get('apellido')?.touched && form.get('apellido')?.invalid">
-    <span *ngIf="form.get('apellido')?.errors?.['required']">El apellido es obligatorio.</span>
-  </div>
-
-  <label>Edad:</label>
-  <input type="number" formControlName="edad" />
-  <div *ngIf="form.get('edad')?.touched && form.get('edad')?.invalid">
-    <span *ngIf="form.get('edad')?.errors?.['required']">La edad es obligatoria.</span>
-    <span *ngIf="form.get('edad')?.errors?.['min'] || form.get('edad')?.errors?.['max']">Edad entre 18 y 120.</span>
-  </div>
-
-  <label>Correo:</label>
-  <input type="email" formControlName="correo" />
-  <div *ngIf="form.get('correo')?.touched && form.get('correo')?.invalid">
-    <span *ngIf="form.get('correo')?.errors?.['required']">El correo es obligatorio.</span>
-    <span *ngIf="form.get('correo')?.errors?.['email']">Formato de correo inválido.</span>
-  </div>
-
-  <label>Teléfono:</label>
-  <input formControlName="telefono" />
-  <div *ngIf="form.get('telefono')?.touched && form.get('telefono')?.invalid">
-    <span *ngIf="form.get('telefono')?.errors?.['required']">El teléfono es obligatorio.</span>
-    <span *ngIf="form.get('telefono')?.errors?.['pattern']">Teléfono de 8 dígitos.</span>
-  </div>
-
-  <button type="submit">Actualizar</button>
-</form>
-<div *ngIf="error" style="color:red">{{ error }}</div>
+<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-blue-100 py-8">
+  <form
+    class="w-full max-w-2xl bg-white/90 backdrop-blur-lg rounded-3xl shadow-2xl p-10 border border-blue-100"
+    [formGroup]="form"
+    (ngSubmit)="actualizarPerfil()"
+  >
+    <h2 class="text-3xl font-extrabold text-blue-700 mb-8 text-center tracking-tight drop-shadow">Mi Perfil</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div>
+        <label for="nombre" class="block text-gray-700 font-semibold mb-2">Nombre:</label>
+        <input id="nombre" formControlName="nombre" type="text"
+          class="w-full px-4 py-2 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 bg-blue-50 text-gray-800 shadow-inner transition-all" />
+        <div *ngIf="form.get('nombre')?.touched && form.get('nombre')?.invalid" class="text-red-600 text-sm mt-1">
+          <span *ngIf="form.get('nombre')?.errors?.['required']">El nombre es obligatorio.</span>
+        </div>
+      </div>
+      <div>
+        <label for="apellido" class="block text-gray-700 font-semibold mb-2">Apellido:</label>
+        <input id="apellido" formControlName="apellido" type="text"
+          class="w-full px-4 py-2 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 bg-blue-50 text-gray-800 shadow-inner transition-all" />
+        <div *ngIf="form.get('apellido')?.touched && form.get('apellido')?.invalid" class="text-red-600 text-sm mt-1">
+          <span *ngIf="form.get('apellido')?.errors?.['required']">El apellido es obligatorio.</span>
+        </div>
+      </div>
+      <div>
+        <label for="edad" class="block text-gray-700 font-semibold mb-2">Edad:</label>
+        <input id="edad" type="number" formControlName="edad"
+          class="w-full px-4 py-2 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 bg-blue-50 text-gray-800 shadow-inner transition-all" />
+        <div *ngIf="form.get('edad')?.touched && form.get('edad')?.invalid" class="text-red-600 text-sm mt-1">
+          <span *ngIf="form.get('edad')?.errors?.['required']">La edad es obligatoria.</span>
+          <span *ngIf="form.get('edad')?.errors?.['min'] || form.get('edad')?.errors?.['max']">Edad entre 18 y 120.</span>
+        </div>
+      </div>
+      <div>
+        <label for="correo" class="block text-gray-700 font-semibold mb-2">Correo:</label>
+        <input id="correo" type="email" formControlName="correo"
+          class="w-full px-4 py-2 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 bg-blue-50 text-gray-800 shadow-inner transition-all" />
+        <div *ngIf="form.get('correo')?.touched && form.get('correo')?.invalid" class="text-red-600 text-sm mt-1">
+          <span *ngIf="form.get('correo')?.errors?.['required']">El correo es obligatorio.</span>
+          <span *ngIf="form.get('correo')?.errors?.['email']">Formato de correo inválido.</span>
+        </div>
+      </div>
+      <div class="md:col-span-2">
+        <label for="telefono" class="block text-gray-700 font-semibold mb-2">Teléfono:</label>
+        <input id="telefono" formControlName="telefono" type="text"
+          class="w-full px-4 py-2 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 bg-blue-50 text-gray-800 shadow-inner transition-all" />
+        <div *ngIf="form.get('telefono')?.touched && form.get('telefono')?.invalid" class="text-red-600 text-sm mt-1">
+          <span *ngIf="form.get('telefono')?.errors?.['required']">El teléfono es obligatorio.</span>
+          <span *ngIf="form.get('telefono')?.errors?.['pattern']">Teléfono de 8 dígitos.</span>
+        </div>
+      </div>
+    </div>
+    <button
+      type="submit"
+      class="w-full py-2 mt-8 rounded-xl bg-gradient-to-r from-blue-600 to-blue-400 text-white font-bold text-lg shadow-lg hover:from-blue-700 hover:to-blue-500 transition-colors tracking-wide drop-shadow"
+    >Actualizar</button>
+    <div *ngIf="error" class="text-red-600 text-center mt-3">{{ error }}</div>
+  </form>
+</div>

@@ -1,1 +1,37 @@
-/* Estilos para login (puedes personalizar) */
+/* Inputs personalizados para login */
+.input-login {
+	width: 100%;
+	padding: 0.6rem 0.85rem;
+	border: 1.5px solid #bfc7d1;
+	border-radius: 9px;
+	font-size: 1.07rem;
+	margin-bottom: 0.5rem;
+	background: #f8fafc;
+	transition: border-color 0.2s, box-shadow 0.2s;
+	box-sizing: border-box;
+}
+.input-login:focus {
+	border-color: #1976d2;
+	outline: none;
+	box-shadow: 0 0 0 2px #1976d233;
+}
+
+.btn-login {
+	width: 100%;
+	padding: 0.8rem;
+	background: linear-gradient(90deg, #1976d2 60%, #42a5f5 100%);
+	color: #fff;
+	border: none;
+	border-radius: 9px;
+	font-size: 1.08rem;
+	font-weight: 700;
+	margin-top: 1.2rem;
+	cursor: pointer;
+	transition: background 0.2s, box-shadow 0.2s;
+	box-shadow: 0 2px 8px rgba(25, 118, 210, 0.08);
+	letter-spacing: 0.5px;
+}
+.btn-login:hover {
+	background: linear-gradient(90deg, #125ea2 60%, #1976d2 100%);
+	box-shadow: 0 4px 16px rgba(25, 118, 210, 0.13);
+}

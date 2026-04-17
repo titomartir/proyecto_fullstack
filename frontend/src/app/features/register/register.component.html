@@ -1,5 +1,5 @@
 <h2>Registro</h2>
-<form [formGroup]="form" (ngSubmit)="register()">
+<form class="form-container" [formGroup]="form" (ngSubmit)="register()">
   <label>Nombre:</label>
   <input formControlName="nombre" />
   <div *ngIf="form.get('nombre')?.touched && form.get('nombre')?.invalid">
