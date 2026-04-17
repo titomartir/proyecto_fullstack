@@ -7,7 +7,12 @@
     "dev": "nodemon app.js",
     "start": "node app.js"
   },
-  "keywords": ["express", "api", "postgresql", "jwt"],
+  "keywords": [
+    "express",
+    "api",
+    "postgresql",
+    "jwt"
+  ],
   "author": "",
   "license": "MIT",
   "dependencies": {
@@ -15,6 +20,7 @@
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
+    "express-validator": "^7.3.2",
     "jsonwebtoken": "^9.0.3",
     "pg": "^8.20.0"
   },

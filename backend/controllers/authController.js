@@ -4,8 +4,8 @@ const authService = require('../services/authService');
 module.exports = {
   async register(req, res, next) {
     try {
-      const { email, password, nombre, edad, telefono } = req.body;
-      const result = await authService.register({ email, password, nombre, edad, telefono });
+      const { email, password, nombre, apellido, edad, telefono, correo } = req.body;
+      const result = await authService.register({ email, password, nombre, apellido, edad, telefono, correo });
       res.status(201).json(result);
     } catch (err) {
       next(err);

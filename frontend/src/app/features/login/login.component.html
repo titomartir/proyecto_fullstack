@@ -1,6 +1,6 @@
 <div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-blue-100 py-8">
   <form
-    class="w-full max-w-md bg-white/80 backdrop-blur-lg rounded-3xl shadow-2xl p-10 border border-blue-100"
+    class="w-full max-w-md bg-white/90 backdrop-blur-lg rounded-3xl shadow-2xl p-10 border border-blue-100"
     [formGroup]="form"
     (ngSubmit)="login()"
   >
@@ -51,10 +51,15 @@
     >Entrar</button>
 
     <div *ngIf="error" class="text-red-600 text-center mt-3">{{ error }}</div>
-
-    <p class="text-center mt-6 text-gray-700">
-      ¿No tienes cuenta?
-      <a routerLink="/register" class="text-blue-600 hover:underline font-medium">Regístrate</a>
-    </p>
   </form>
+</div>
+<div class="flex justify-center -mt-2">
+  <div class="text-center text-gray-700 bg-white/80 rounded-xl px-6 py-3 shadow border border-blue-100">
+    ¿No tienes cuenta?
+    <button
+      type="button"
+      [routerLink]="'/register'"
+      class="inline-block ml-1 px-3 py-1 rounded-lg text-blue-600 hover:bg-blue-100 hover:underline font-medium focus:outline-none focus:ring-2 focus:ring-blue-400 cursor-pointer transition-all"
+    >Regístrate</button>
+  </div>
 </div>
